@@ -1,30 +1,34 @@
 package com.Scandel.rain.level;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import com.Scandel.rain.graphics.Screen;
 import com.Scandel.rain.level.tile.Tile;
 
-public class Level {
+public abstract class Level {
     protected int width, height;
     protected int[] tiles;
-
-    public Level(int width, int height) {
-        this.width = width;
-        this.height = height;
-        tiles = new int[width*height];
-        generateLevel();
-    }
+    protected int[] spawnPoint;
 
     public Level(String path) {
         loadLevel(path);
     }
 
-    // random generation of level
-    protected void generateLevel() {
+    public abstract int[] getSpawnPoint();
 
-    }
-
-    protected void loadLevel(String path) {
-
+    private void loadLevel(String path) {
+        try {
+            BufferedImage image = ImageIO.read(SpawnLevel.class.getResource(path));
+            width = image.getWidth(); // tile coords
+            height = image.getHeight();
+            tiles = new int[width * height];
+            image.getRGB(0,0,width,height,tiles,0,width);
+        } catch (IOException e) {
+            System.out.println("File was not loaded");
+        }
     }
 
     public void update() { // 60 ups
@@ -60,5 +64,6 @@ public class Level {
         if (tiles[x + y * width] == 0xff7092BE) return Tile.stoneBrick;
         
         return Tile.fence;
-    } 
+    }
+
 }

@@ -46,8 +46,8 @@ public class Game extends Canvas implements Runnable {
         screen = new Screen(width, height);  // create instance of screen size 300 * 168
         frame = new JFrame();
         key = new Keyboard();
-        level = new SpawnLevel("/textures/map.png");
-        player = new Player((2 << 4),(2 << 4),key);
+        level = new SpawnLevel();
+        player = new Player((level.getSpawnPoint()[0] << 4),(level.getSpawnPoint()[1] << 4),key);
         npc1 = new Npc((2 << 4), (2 << 4)); 
         npc2 = new Npc((25 << 4), (19 << 4)); 
         npc3 = new Npc((24 << 4), (51 << 4)); 

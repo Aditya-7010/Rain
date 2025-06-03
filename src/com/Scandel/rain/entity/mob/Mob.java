@@ -60,4 +60,8 @@ public abstract class Mob extends Entity{
 
     public int getHealth() {return health;}
 
+    public void strike() {
+        
+    }
+
 }

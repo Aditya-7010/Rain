@@ -6,7 +6,17 @@
             "name": "Game",
             "request": "launch",
             "mainClass": "com.Scandel.rain.Game",
-            "classpath": ["src", "res"],
+            "projectName": "Rain_f3169c3f"
+        },
+        {
+            "type": "java",
+            "name": "Game",
+            "request": "launch",
+            "mainClass": "com.Scandel.rain.Game",
+            "classpath": [
+                "src",
+                "res"
+            ],
             "projectName": "Rain_1c34c156"
         }
     ]
