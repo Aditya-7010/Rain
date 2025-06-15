@@ -1,7 +1,6 @@
 package com.Scandel.rain;
 import javax.swing.JFrame;
 
-import com.Scandel.rain.entity.mob.Npc;
 import com.Scandel.rain.entity.mob.Player;
 import com.Scandel.rain.graphics.Screen;
 import com.Scandel.rain.input.Keyboard;
@@ -16,12 +15,13 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
+
 public class Game extends Canvas implements Runnable {
     
     private static final long serialVersionUID = 1L;
     // Window gets bigger in size but actual height and width of frame remains the same
     // So game will appear bigger but less data will have to be processed
-    public static int width = 400;
+    public static int width = 500;
     public static int height = width / 16 * 9;
     public static int scale = 3;
 
@@ -32,7 +32,6 @@ public class Game extends Canvas implements Runnable {
     private Keyboard key;
     private Level level;
     private Player player;
-    private Npc npc1, npc2, npc3;
     private Ui ui;
 
     private Screen screen; // object to process graphics
@@ -48,12 +47,6 @@ public class Game extends Canvas implements Runnable {
         key = new Keyboard();
         level = new SpawnLevel();
         player = new Player((level.getSpawnPoint()[0] << 4),(level.getSpawnPoint()[1] << 4),key);
-        npc1 = new Npc((2 << 4), (2 << 4)); 
-        npc2 = new Npc((25 << 4), (19 << 4)); 
-        npc3 = new Npc((24 << 4), (51 << 4)); 
-        npc1.init(level);
-        npc2.init(level);
-        npc3.init(level);
         player.init(level);
         ui = new Ui(player);
 
@@ -92,11 +85,11 @@ public class Game extends Canvas implements Runnable {
                 update();
                 updates++;
                 delta--;
+                render();
+                frames++;
             }
-            render();
-            frames++;
+            
             if (System.currentTimeMillis() - timer > 1000) { // do it once per second
-                // System.out.println("FPS: " + frames + "Updates: " + updates);
                 frame.setTitle("Rain" + "  " + "FPS: " + frames + "\tUpdates: " + updates);
                 updates = 0;
                 frames = 0;
@@ -109,9 +102,7 @@ public class Game extends Canvas implements Runnable {
     public void update() {
         key.update();
         player.update();
-        npc1.update(screen, player);
-        npc2.update(screen, player);
-        npc3.update(screen, player);
+        level.update(screen, player);
         ui.update();
     }
 
@@ -122,14 +113,11 @@ public class Game extends Canvas implements Runnable {
             createBufferStrategy(3); // 1 image on screen 1 on buffer and 1 will be worked on in background
             return;
         }
-        int xScroll = player.x - screen.width/2;
-        int yScroll = player.y - screen.height/2;
+        int xScroll = (int)player.x - screen.width/2;
+        int yScroll = (int)player.y - screen.height/2;
         screen.clear();
         level.render(xScroll, yScroll, screen);
         player.render(xScroll, yScroll, screen);
-        npc1.render(screen);
-        npc2.render(screen);
-        npc3.render(screen);
         ui.render(screen);
 
         for (int i = 0; i < pixels.length; i++) {
@@ -139,7 +127,7 @@ public class Game extends Canvas implements Runnable {
         // everything to be displayed between upper line and g.dispose
         // g.setColor(Color.black);
         g.fillRect(0, 0, getWidth(), getHeight()); // getwidth return size of window and 0,0 is top left
-        // System.out.println(getWidth() + " " + getHeight()); getwidth is 900
+        // System.out.println(getWidth() + " " + getHeight()); getwidth is 900aaaaaaaaa
         g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
         g.dispose(); // release the system resources
         bs.show();  // display buffer to the screensssss

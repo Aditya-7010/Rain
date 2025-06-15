@@ -1,8 +1,8 @@
 package com.Scandel.rain.entity.mob;
-
 import com.Scandel.rain.graphics.Screen;
 import com.Scandel.rain.graphics.Sprite;
 import com.Scandel.rain.input.Keyboard;
+import com.Scandel.rain.utilities.DamageHandler;
 
 
 public class Player extends Mob {
@@ -11,6 +11,8 @@ public class Player extends Mob {
     private Sprite sprite;
     private int anim;
     private boolean walking;
+    private float speed = 2f;
+    private int hitCooldown = 25;
 
     public Player(Keyboard input) {
         this.input = input;
@@ -20,24 +22,42 @@ public class Player extends Mob {
         this.x = x;
         this.y = y;
         this.input = input;
+        health = 10;
     }
 
     public void update() {
-        int xa = 0, ya = 0;
+        float xa = 0, ya = 0;
+        if (hitCooldown > 0) hitCooldown--;
         if (anim < 7500) anim++;
         else anim = 0;
-        if (input.left && input.up) {
-            
-        }
-        if (input.right && input.up) xa++;
-        if (input.left && input.down) xa--;
-        if (input.right && input.down) xa++;
-        if (input.up) ya--;
-        if (input.down) ya++;
-        if (input.left) xa--;
-        if (input.right) xa++;
 
-        if (xa != 0 || ya != 0 && (!cutScene)) {
+        // if (input.left && input.up) {
+        //     xa -= Math.cos(45) * speed;
+        //     ya -= Math.cos(45) * speed;
+        // }
+        // else if (input.right && input.up) {
+        //     xa += Math.cos(45) * speed;
+        //     ya -= Math.cos(45) * speed;
+        // }
+        // else if (input.left && input.down) {
+        //     xa -= Math.cos(45) * speed;
+        //     ya += Math.cos(45) * speed;
+        // }
+        // else if (input.right && input.down) {
+        //     xa += Math.cos(45) * speed;
+        //     ya += Math.cos(45) * speed;
+        // }
+        if (input.up) ya -= 1 * speed;
+        if (input.down) ya += 1 * speed;
+        if (input.left) xa -= 1 * speed;
+        if (input.right) xa += 1 * speed;
+        
+        if (input.hit && hitCooldown <= 0) {
+            DamageHandler.regularDamage(this, level);
+            hitCooldown = 25;  
+        } 
+
+        if (xa != 0 || ya != 0 ) {
             move(xa, ya);   
             walking = true;
         }
@@ -78,5 +98,7 @@ public class Player extends Mob {
         screen.renderPlayer(x-16,y-16, sprite);
     }
 
-    
+    public void reduceHealth(float damage) {
+        health -= damage;
+    }
 }

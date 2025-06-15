@@ -7,15 +7,17 @@ import com.Scandel.rain.graphics.Sprite;
 
 public class Npc extends Mob{
 
-    public int yc = 0, xc = 0, sx, sy; // pixels
+    public int yc = 0, xc = 0, posX, posY; // pixels
     public Sprite sprite = Sprite.player_forward;
     private boolean walking = true;
     private Random random = new Random();
     private int counter = 120, anim = 0;
+    protected String name;
 
-    public Npc(int sx, int sy) {
-        this.sx = sx; 
-        this.sy = sy;
+    public Npc(int posX, int posY) {
+        this.posX = posX; 
+        this.posY = posY;
+        super.health = 10;
     }
 
     public String getDialougue(String[] dialogues) {
@@ -52,15 +54,20 @@ public class Npc extends Mob{
                 else sprite = Sprite.npc_left_2;
             }
         }  
-        screen.renderNpc(sx , sy , this);
+        screen.renderNpc(posX , posY , this);
+        screen.renderNpcHealth(posX, posY, health);
     }
 
+    public boolean isOnScreen(Screen screen) {
+        int xa = posX - screen.xOffset;
+        int ya = posY - screen.yOffset;
+        if (xa < -this.sprite.SIZE - 64 || xa >= screen.width + 64|| ya < -64 || ya >= screen.height + 64) return false;
+        return true;
+    }
+    
     public void update(Screen screen, Player player) {  // check if npc appears on screen and only then update it
         if (anim < 7500) anim++;
         else anim = 0;
-        int xa = sx - screen.xOffset;
-        int ya = sy - screen.yOffset;
-        if (xa < -this.sprite.SIZE - 64 || xa >= screen.width + 64|| ya < -64 || ya >= screen.height + 64) return;
 
         if (yc == 0 && xc == 0) {
             xc = random.nextInt(-64,64);
@@ -71,9 +78,8 @@ public class Npc extends Mob{
         //     playerInteraction = true;
         // }
         checkforPlayer(player, screen);
-        if (player.cutScene && player.input.skip) {
+        if (player.input.skip) {
             walking = true;
-            player.cutScene = false;
         } 
 
         if (counter % 2 == 0)
@@ -86,12 +92,12 @@ public class Npc extends Mob{
         if (!walking) return;
         if (yc != 0) {
             int ym = (Math.abs(yc)/yc);
-            boolean a = collision(sx, sy + (ym << 4));
+            boolean a = collision(posX, posY + (ym << 4));
             if (a) {
                 yc -= ym * 2; 
             }
             if (!a && yc != 0) {
-                sy += ym;
+                posY += ym;
                 yc -= ym;    
             }
             if (ym < 0) dir = 0;
@@ -102,12 +108,12 @@ public class Npc extends Mob{
     
         if (xc != 0) {
             int xm = (Math.abs(xc)/xc);
-            boolean b = collision(sx + (xm << 4), sy);
+            boolean b = collision(posX + (xm << 4), posY);
             if (b) {
                 xc -= xm * 2;
             }
             if (!b && xc != 0) {
-                sx += xm;
+                posX += xm;
                 xc -= xm;
             }
             if (xm > 0) dir = 1;
@@ -119,9 +125,8 @@ public class Npc extends Mob{
    
 
     private void interactWithPlayer(Player player) {
-        player.cutScene = true;
-        int dx = sx - player.x;
-        int dy = sy - player.y;
+        float dx = posX - player.x;
+        float dy = posY - player.y;
 
         if (Math.abs(dx) > Math.abs(dy)) {  
             if (dx > 0) dir = 3;        
@@ -144,13 +149,20 @@ public class Npc extends Mob{
     }
 
     private void checkforPlayer(Player player, Screen screen) {
-        if ((player.x > (sx - 64)) && (player.x < (sx + 64)) && ((player.y < sy + 64) && (player.y > sy - 64))) {
+        if ((player.x > (posX - 64)) && (player.x < (posX + 64)) && ((player.y < posY + 64) && (player.y > posY - 64))) {
             
             if (player.input.interact)
                 interactWithPlayer(player);
         }
     }
 
+    public void reduceHealth(float damage) {
+        showHealth(health, damage);
+        health -= damage;
+    }
 
+    public void showHealth(float health, float damage) {
+        Screen.renderNpcHealth((int) x,(int) y, health);
+    }
 
 }

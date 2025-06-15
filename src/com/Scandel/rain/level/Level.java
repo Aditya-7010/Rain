@@ -5,6 +5,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.Scandel.rain.entity.mob.Npc;
+import com.Scandel.rain.entity.mob.Player;
+import com.Scandel.rain.entity.mob.Villager;
 import com.Scandel.rain.graphics.Screen;
 import com.Scandel.rain.level.tile.Tile;
 
@@ -12,12 +15,17 @@ public abstract class Level {
     protected int width, height;
     protected int[] tiles;
     protected int[] spawnPoint;
+    public Npc[] npcs;
 
-    public Level(String path) {
+    public Level(String path, int npcCount) {
         loadLevel(path);
+        npcs = new Villager[npcCount];
+        spawnNpcs();
     }
 
     public abstract int[] getSpawnPoint();
+
+    public abstract boolean spawnNpcs();
 
     private void loadLevel(String path) {
         try {
@@ -31,12 +39,15 @@ public abstract class Level {
         }
     }
 
-    public void update() { // 60 ups
-
+    public void update(Screen screen, Player player) { // 60 ups
+        for (Npc npc : npcs) {
+            if (npc == null) continue;
+            if (npc.isOnScreen(screen))
+                npc.update(screen, player);
+        }
+        
     }
 
-    // private void time() { // daylight cycles
-    // }
 
     public void render(int xScroll, int yScroll, Screen screen) { // tells which tiles are needed
         screen.setOffset(xScroll, yScroll);  // xSroll and yScroll are top left corner coords
@@ -49,6 +60,11 @@ public abstract class Level {
             for (int x = x0; x < x1; x++) {
                 getTile(x, y).render(x, y, screen); // render tile on x,y porsition on screen in tile coords
             }
+        }
+        for (Npc npc : npcs) {
+            if (npc == null) continue;
+            if (npc.isOnScreen(screen))
+                npc.render(screen);
         }
     }
 

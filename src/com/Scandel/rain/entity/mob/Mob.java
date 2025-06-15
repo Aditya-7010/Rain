@@ -8,15 +8,12 @@ import com.Scandel.rain.level.Level;
 public abstract class Mob extends Entity{
     
     protected Sprite sprite;
+    protected int health;
     protected int dir = 0; //direction 0 -n, 1 -e, 2 -s, 3 -w
-    protected boolean moving = false;
-    protected boolean cutScene = false;
-    protected Level level;
-    protected int health = 10;
+    
 
-    public void move(int xa, int ya) {
-        if (cutScene) return;
-        int xnp = xa + x, ynp = ya + y;
+    public void move(float xa, float ya) {
+        float xnp = xa + x, ynp = ya + y;
         if (xa > 0) {
             dir = 1;
             xnp += 9;
@@ -33,7 +30,7 @@ public abstract class Mob extends Entity{
             dir = 0;
         } 
         
-        if (!collision(xnp, ynp)) {
+        if (!collision((int)xnp,(int) ynp)) {
             x += xa;  // in pixels
             y += ya;
         }
@@ -54,9 +51,7 @@ public abstract class Mob extends Entity{
         this.level = level;
     }
     
-    public void reduceHealth(int damage) {
-        health -= damage;
-    }
+    public abstract void reduceHealth(float damage);
 
     public int getHealth() {return health;}
 

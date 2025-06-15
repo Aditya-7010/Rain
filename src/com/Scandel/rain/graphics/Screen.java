@@ -7,13 +7,15 @@ import com.Scandel.rain.level.tile.Tile;
 
 public class Screen {
 
-    public int width, height; // same as height and width of a frame or screen
+    public static int width; // same as height and width of a frame or screen
+    public int height;
     public final int MAP_SIZE = 64;
     public final int MAP_SIZE_MASK = MAP_SIZE - 1;
 
-    public int xOffset, yOffset;
+    public static int xOffset;
+    public static int yOffset;
 
-    public int[] pixels;  // stores final data to be displayed on the screen
+    public static int[] pixels;  // stores final data to be displayed on the screen
     public int[] tiles = new int[MAP_SIZE * MAP_SIZE];  // stores texture of each tile 
 
     private Random random = new Random();
@@ -51,18 +53,18 @@ public class Screen {
         }
     }
 
-    public void renderPlayer(int xp, int yp, Sprite sprite) {
+    public void renderPlayer(float xp, float yp, Sprite sprite) {
         yp -= yOffset; // offset due to player movement
         xp -= xOffset; 
         for (int y = 0; y < sprite.SIZE; y++) {
-            int ya = yp + y;
+            float ya = yp + y;
             for (int x = 0; x < sprite.SIZE; x++) {
-                int xa = xp + x;
+                float xa = xp + x;
                 if (xa <  -sprite.SIZE || xa >= width || ya < 0 || ya >= height) break;
                 if (xa < 0) xa = 0;
                 int col = sprite.pixels[x+y*sprite.SIZE];
                 if (col != 0xffed1c24)
-                    pixels[xa + ya * width] = col;
+                    pixels[(int)xa + (int)ya * width] = col;
             }
         }
     }
@@ -113,27 +115,8 @@ public class Screen {
         }
     }
 
-    public void renderNpcHealth(int sx, int sy, int health) {
-        sx -= xOffset;
-        sy -= yOffset;
-        for (int y = 0; y < 16; y++) {
-            int ya = y + sy + 8;
-            for (int x = 0; x < Sprite.npcHealth.SIZE; x++) {
-                int xa = x + sx - 8;
-                int col = Sprite.npcHealth.pixels[x + y * Sprite.npcHealth.SIZE];
-                if (health == 5) {
-                    col = 0xffffff00;
-                    if (x > 15)
-                        col = 0xff494949;
-                }
-                if (health == 2) {
-                    col = 0xffff0000;
-                    if (x > 8)
-                        col = 0xff494949;
-                }
-                if (col != 0xffed1c24) pixels[xa + ya * width/2] = col;
-            }
-        }
+    public static void renderNpcHealth(int sx, int sy, float health) {
+    
     }
 
 }

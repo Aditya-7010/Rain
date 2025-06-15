@@ -6,7 +6,7 @@ import java.util.Random;
 
 public abstract class Entity {
 
-    public int x , y;
+    public float x , y;
     private boolean removed = false; // removed from the level
     protected Level level;
     protected final Random random = new Random(); 
@@ -19,7 +19,7 @@ public abstract class Entity {
 
     }
 
-    public void remove() {
+    public void despawn() {
         removed = true; // to be updated in the future
     }
 
